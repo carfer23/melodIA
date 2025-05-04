@@ -1,0 +1,10 @@
+# Ignorar archivos de backup de Reaper
+*.rpp-bak
+Backups/
+
+# Ignorar entorno virtual de Python
+venv/
+
+# Ignorar archivos temporales
+*.pyc
+__pycache__/
