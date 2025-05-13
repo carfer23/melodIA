@@ -6,7 +6,7 @@ import random
 
 class ParamsAMIDI:
 
-    def __init__(self, tonalidad_value, tempo=120, duracion_media=1, sigma=0.7, velocidad_media=64):
+    def __init__(self, tonalidad_value, tempo=120, duracion_media=1, sigma=0.7, velocidad_media=64, densidad_media=1):
         """
         Inicializa la clase con los parámetros de tonalidad, tempo, y duración total del MIDI.
 
@@ -19,6 +19,7 @@ class ParamsAMIDI:
         self.tempo = tempo
         self.tonalidad_mayor = tonalidad_value > 0.5
         self.velocity_media = velocidad_media
+        self.densidad_media = densidad_media
 
         # Calcula la nota base y la escala de acuerdo con la tonalidad.
         self.nota_base = self._calcular_nota_base()
@@ -39,6 +40,16 @@ class ParamsAMIDI:
         self.duracion_media = duracion_media
         self.sigma = sigma
         self.pesos_duracion = self._calcular_pesos(duracion_media)
+
+    def _ajustar_espaciado(self, tiempo_inicio, duracion_nota):
+        """
+        Ajusta el espaciado entre notas basándose en la densidad media.
+        Añade la duración de la nota para evitar que se solapen.
+        """
+        # El espaciado de las notas será inversamente proporcional a la densidad
+        intervalo_base = 60 / self.tempo  # Intervalo básico entre notas (en segundos)
+        intervalo_ajustado = intervalo_base * (1 - self.densidad_media)  # Ajuste de densidad
+        return tiempo_inicio + duracion_nota + intervalo_ajustado  # Sumamos la duración de la nota actual
 
     def _generar_velocity(self):
         # Aseguramos que la velocidad esté en un rango adecuado (0-127 para MIDI)
@@ -140,7 +151,8 @@ class ParamsAMIDI:
 
             instrumento_midi.notes.append(nota_midi)
 
-            tiempo_inicio += duracion_segundos
+            # Ajusta el espaciado entre las notas en función de la densidad
+            tiempo_inicio = self._ajustar_espaciado(tiempo_inicio, duracion_segundos)
 
         midi.instruments.append(instrumento_midi)
         midi.write(nombre_archivo)
@@ -264,17 +276,19 @@ class TestParamsAMIDI(unittest.TestCase):
 if __name__ == '__main__':
     #unittest.main()
 
-    # Crear instancia de ParamsAMIDI con una velocidad promedio de 0.5 (más lenta)
-    params_lenta = ParamsAMIDI(0.5, tempo=120, duracion_media=1, velocidad_media=0.5)  
-    params_lenta.generar_midi("velocidad_lenta.mid")
+    params_baja_densidad = ParamsAMIDI(0.5, tempo=120, duracion_media=1, densidad_media=0.2)  # Densidad baja
+    params_baja_densidad.generar_midi("baja_densidad.mid")
 
-    # Crear instancia de ParamsAMIDI con una velocidad promedio de 1 (normal)
-    params_normal = ParamsAMIDI(0.5, tempo=120, duracion_media=1, velocidad_media=0.7)  
-    params_normal.generar_midi("velocidad_normal.mid")
+    params_alta_densidad = ParamsAMIDI(0.5, tempo=120, duracion_media=1, densidad_media=0.8)  # Densidad alta
+    params_alta_densidad.generar_midi("alta_densidad.mid")
 
-    # Crear instancia de ParamsAMIDI con una velocidad promedio de 1.5 (más rápida)
-    params_rapida = ParamsAMIDI(0.5, tempo=120, duracion_media=1, velocidad_media=1)  
-    params_rapida.generar_midi("velocidad_rapida.mid")
+    params_media_densidad = ParamsAMIDI(0.5, tempo=120, duracion_media=1, densidad_media=0.5)  # Densidad intermedia
+    params_media_densidad.generar_midi("densidad_media.mid")
+
+    params_max_densidad = ParamsAMIDI(0.5, tempo=120, duracion_media=1, densidad_media=1.0)  # Densidad máxima
+    params_max_densidad.generar_midi("densidad_maxima.mid")
+
+
 
 
 
