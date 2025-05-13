@@ -1,5 +1,8 @@
-# melo![ChatGPT Image May 7, 2025, 02_49_41 PM](https://github.com/user-attachments/assets/c797144c-c110-46cd-9fac-92d0d9f20312)
-dIA
+# melodIA
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c797144c-c110-46cd-9fac-92d0d9f20312" width="350"/>
+</p>
+
 1) imagen->texto
 2) texto->prompt audio
 3) prompt audio -> genera midi magenta
