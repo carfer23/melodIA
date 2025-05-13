@@ -6,7 +6,7 @@ import random
 
 class ParamsAMIDI:
 
-    def __init__(self, tonalidad_value, tempo=120, duracion_media=1, sigma=0.7):
+    def __init__(self, tonalidad_value, tempo=120, duracion_media=1, sigma=0.7, velocidad_media=64):
         """
         Inicializa la clase con los parámetros de tonalidad, tempo, y duración total del MIDI.
 
@@ -18,6 +18,7 @@ class ParamsAMIDI:
         self.tonalidad_value = tonalidad_value
         self.tempo = tempo
         self.tonalidad_mayor = tonalidad_value > 0.5
+        self.velocity_media = velocidad_media
 
         # Calcula la nota base y la escala de acuerdo con la tonalidad.
         self.nota_base = self._calcular_nota_base()
@@ -38,6 +39,15 @@ class ParamsAMIDI:
         self.duracion_media = duracion_media
         self.sigma = sigma
         self.pesos_duracion = self._calcular_pesos(duracion_media)
+
+    def _generar_velocity(self):
+        # Aseguramos que la velocidad esté en un rango adecuado (0-127 para MIDI)
+        velocity = int(np.clip(127 * (self.velocity_media ** 2), 0, 127)) 
+        return velocity
+    
+    def setVelocityMedia(self, velocity_media):
+        self.velocity_media = velocity_media
+
 
     def setSigma(self, sigma):
         self.sigma = sigma
@@ -117,7 +127,7 @@ class ParamsAMIDI:
             # Seleciona una nota aleatoria dentro de la escala
             nota_relativa = np.random.choice(len(self.escala))
             nota_midi = pretty_midi.Note(
-                velocity=64,
+                velocity=self._generar_velocity(),
                 pitch=self.generar_nota(nota_relativa),
                 start=tiempo_inicio,
                 end=tiempo_inicio
@@ -254,17 +264,18 @@ class TestParamsAMIDI(unittest.TestCase):
 if __name__ == '__main__':
     #unittest.main()
 
-    params = ParamsAMIDI(0.5, tempo=120, duracion_media=0.25)  # Favorece semicorcheas
-    params.generar_midi("semi_preferidas.mid")
+    # Crear instancia de ParamsAMIDI con una velocidad promedio de 0.5 (más lenta)
+    params_lenta = ParamsAMIDI(0.5, tempo=120, duracion_media=1, velocidad_media=0.5)  
+    params_lenta.generar_midi("velocidad_lenta.mid")
 
-    params = ParamsAMIDI(0.5, tempo=120, duracion_media=0.5)  # Favorece corcheas
-    params.generar_midi("corcheas_preferidas.mid")
+    # Crear instancia de ParamsAMIDI con una velocidad promedio de 1 (normal)
+    params_normal = ParamsAMIDI(0.5, tempo=120, duracion_media=1, velocidad_media=0.7)  
+    params_normal.generar_midi("velocidad_normal.mid")
 
-    params = ParamsAMIDI(0.5, tempo=120, duracion_media=1)  # Favorece negras
-    params.generar_midi("negras_preferidas.mid")
+    # Crear instancia de ParamsAMIDI con una velocidad promedio de 1.5 (más rápida)
+    params_rapida = ParamsAMIDI(0.5, tempo=120, duracion_media=1, velocidad_media=1)  
+    params_rapida.generar_midi("velocidad_rapida.mid")
 
-    params = ParamsAMIDI(0.5, tempo=120, duracion_media=2)  # Favorece blancas
-    params.generar_midi("blancas_preferidas.mid")
 
 
     
