@@ -6,7 +6,7 @@ import random
 
 class ParamsAMIDI:
 
-    def __init__(self, tonalidad_value, tempo=120):
+    def __init__(self, tonalidad_value, tempo=120, duracion_media=1, sigma=0.7):
         """
         Inicializa la clase con los parámetros de tonalidad, tempo, y duración total del MIDI.
 
@@ -33,6 +33,28 @@ class ParamsAMIDI:
             0.25: 60 / (4 * self.tempo),  # Semicorchea
             2: 60 / (self.tempo / 2)  # Blanca
         }
+
+        # Para elegir la duración de notas predominante
+        self.duracion_media = duracion_media
+        self.sigma = sigma
+        self.pesos_duracion = self._calcular_pesos(duracion_media)
+
+    def setSigma(self, sigma):
+        self.sigma = sigma
+
+    def _calcular_pesos(self, media):
+        return {
+            d: np.exp(-((d - media) ** 2) / (2 * self.sigma ** 2))
+            for d in self.duraciones_posibles
+        }
+
+    
+    def _elegir_duracion(self):
+        return random.choices(
+            self.duraciones_posibles,
+            weights=[self.pesos_duracion[d] for d in self.duraciones_posibles],
+            k=1
+        )[0]
 
     def set_tempo(self, bpm):
         self.tempo = bpm
@@ -101,7 +123,8 @@ class ParamsAMIDI:
                 end=tiempo_inicio
             )
             # Asignar una duración aleatoria para la nota en términos de segundos
-            duracion_aleatoria = random.choice(self.duraciones_posibles)
+            duracion_aleatoria = self._elegir_duracion()
+
             duracion_segundos = self.duraciones_en_segundos[duracion_aleatoria]
             nota_midi.end = tiempo_inicio + duracion_segundos
 
@@ -231,46 +254,19 @@ class TestParamsAMIDI(unittest.TestCase):
 if __name__ == '__main__':
     #unittest.main()
 
-    # Ejemplo 1: C mayor, tempo lento
-    params_c_mayor = ParamsAMIDI(0.0, tempo=60)
-    params_c_mayor.generar_midi(nombre_archivo="c_mayor_lento.mid")
+    params = ParamsAMIDI(0.5, tempo=120, duracion_media=0.25)  # Favorece semicorcheas
+    params.generar_midi("semi_preferidas.mid")
 
-    # Ejemplo 2: G mayor, tempo rápido
-    params_g_mayor = ParamsAMIDI(0.5, tempo=180)
-    params_g_mayor.generar_midi(nombre_archivo="g_mayor_rapido.mid")
+    params = ParamsAMIDI(0.5, tempo=120, duracion_media=0.5)  # Favorece corcheas
+    params.generar_midi("corcheas_preferidas.mid")
 
-    # Ejemplo 3: A menor, tempo moderado
-    params_a_menor = ParamsAMIDI(0.142857, tempo=120)
-    params_a_menor.generar_midi(nombre_archivo="a_menor.mid")
+    params = ParamsAMIDI(0.5, tempo=120, duracion_media=1)  # Favorece negras
+    params.generar_midi("negras_preferidas.mid")
 
-    # Ejemplo 4: D mayor, tempo lento
-    params_d_mayor = ParamsAMIDI(0.285714, tempo=80)
-    params_d_mayor.generar_midi(nombre_archivo="d_mayor_lento.mid")
+    params = ParamsAMIDI(0.5, tempo=120, duracion_media=2)  # Favorece blancas
+    params.generar_midi("blancas_preferidas.mid")
 
-    # Ejemplo 5: E menor, tempo rápido
-    params_e_menor = ParamsAMIDI(0.428571, tempo=160)
-    params_e_menor.generar_midi(nombre_archivo="e_menor_rapido.mid")
 
-    # Ejemplo 6: B menor, tempo muy lento
-    params_b_menor = ParamsAMIDI(0.928571, tempo=40)
-    params_b_menor.generar_midi(nombre_archivo="b_menor_muy_lento.mid")
-
-    # Ejemplo 7: F mayor, tempo variado
-    params_f_mayor = ParamsAMIDI(0.285714, tempo=110)
-    params_f_mayor.generar_midi(nombre_archivo="f_mayor.mid")
-
-    # Ejemplo 8: C menor, tempo muy rápido
-    params_c_menor = ParamsAMIDI(0.857143, tempo=200)
-    params_c_menor.generar_midi(nombre_archivo="c_menor_muy_rapido.mid")
-
-    # Ejemplo 9: C mayor, cambiar tempo dinámicamente
-    params_c_mayor = ParamsAMIDI(0.0, tempo=60)
-    params_c_mayor.generar_midi(nombre_archivo="c_mayor_lento.mid")
-
-    params_c_mayor.set_tempo(120)
-    params_c_mayor.generar_midi(nombre_archivo="c_mayor_moderado.mid")
-
-    params_c_mayor.set_tempo(180)
-    params_c_mayor.generar_midi(nombre_archivo="c_mayor_rapido.mid")
+    
 
 
