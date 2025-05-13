@@ -1,0 +1,129 @@
+import pretty_midi
+import numpy as np
+import unittest
+import os
+import math
+
+class TonalidadAMIDI:
+    def __init__(self, tonalidad_value):
+        self.tonalidad_value = tonalidad_value
+        self.tonalidad_mayor = tonalidad_value >= 0.5
+        self.nota_base = self._calcular_nota_base()
+        self.escala = self._obtener_escala()
+        self.sostenidos = self._obtener_sostenidos()
+
+    def _calcular_nota_base(self):
+        notas = [57, 59, 61, 62, 64, 66, 68,  # a, b, c, d, e, f, g
+                60, 62, 64, 65, 67, 69, 71]  # C, D, E, F, G, A, B
+
+        index = int(self.tonalidad_value * 14) - 1
+        index = max(0, index)
+
+        return notas[index]
+
+    def _obtener_escala(self):
+        return [0, 2, 4, 5, 7, 9, 11, 12] if self.tonalidad_mayor else [0, 2, 3, 5, 7, 8, 10, 12]
+
+    def _obtener_sostenidos(self):
+        cantidad_sostenidos = int(self.tonalidad_value * 11)
+        sostenidos_por_tonalidad = {
+            0: [],
+            1: [4],
+            2: [4, 1],
+            3: [4, 1, 5],
+            4: [4, 1, 5, 0],
+            5: [4, 1, 5, 0, 9],
+            6: [4, 1, 5, 0, 9, 2],
+            7: [4, 1, 5, 0, 9, 2, 6],
+            8: [4, 1, 5, 0, 9, 2, 6, 3],
+            9: [4, 1, 5, 0, 9, 2, 6, 3, 7],
+            10: [4, 1, 5, 0, 9, 2, 6, 3, 7, 10],
+            11: [4, 1, 5, 0, 9, 2, 6, 3, 7, 10, 8],
+        }
+        return sostenidos_por_tonalidad.get(cantidad_sostenidos, [])
+
+    def generar_nota(self, nota_relativa):
+        nota = self.nota_base + self.escala[nota_relativa]
+        if self.tonalidad_mayor:
+            if nota_relativa in self.sostenidos:
+                nota += 1
+        else:
+            indices_validos = [i for i in [0, 3, 5, 7, 10] if i < len(self.escala)]
+            notas_a_subir = [self.escala[i] for i in indices_validos[:min(len(self.sostenidos), len(indices_validos))]]
+            if self.escala[nota_relativa] in notas_a_subir:
+                nota += 1
+        return nota
+
+    def generar_midi(self, nombre_archivo="tonalidad.mid", instrumento=0, tempo=120, duracion_segundos=10):
+        duracion_negra = 60 / tempo
+        midi = pretty_midi.PrettyMIDI(initial_tempo=tempo)
+        instrumento_midi = pretty_midi.Instrument(program=instrumento, name="Tonalidad")
+        tiempo_inicio = 0
+        while tiempo_inicio < duracion_segundos:
+            nota_relativa = np.random.choice(len(self.escala))
+            nota_midi = pretty_midi.Note(
+                velocity=64,
+                pitch=self.generar_nota(nota_relativa),
+                start=tiempo_inicio,
+                end=tiempo_inicio + duracion_negra
+            )
+            instrumento_midi.notes.append(nota_midi)
+            tiempo_inicio += duracion_negra
+        midi.instruments.append(instrumento_midi)
+        midi.write(nombre_archivo)
+        print(f"Archivo MIDI generado: {nombre_archivo}")
+
+class TestTonalidadAMIDI(unittest.TestCase):
+    def test_calcular_nota_base(self):
+        self.assertEqual(TonalidadAMIDI(0.07142857142857142)._calcular_nota_base(), 57)  # a 1/14 etc
+        self.assertEqual(TonalidadAMIDI(0.14285714285714285)._calcular_nota_base(), 59)  # b
+        self.assertEqual(TonalidadAMIDI(0.21428571428571427)._calcular_nota_base(), 61)  # c
+        self.assertEqual(TonalidadAMIDI(0.2857142857142857)._calcular_nota_base(), 62)   # d
+        self.assertEqual(TonalidadAMIDI(0.35714285714285715)._calcular_nota_base(), 64)  # e
+        self.assertEqual(TonalidadAMIDI(0.42857142857142855)._calcular_nota_base(), 66)  # f
+        self.assertEqual(TonalidadAMIDI(0.5)._calcular_nota_base(), 68)                  # g
+        self.assertEqual(TonalidadAMIDI(0.5714285714285714)._calcular_nota_base(), 60)   # C
+        self.assertEqual(TonalidadAMIDI(0.6428571428571429)._calcular_nota_base(), 62)   # D
+        self.assertEqual(TonalidadAMIDI(0.7142857142857143)._calcular_nota_base(), 64)   # E
+        self.assertEqual(TonalidadAMIDI(0.7857142857142857)._calcular_nota_base(), 65)   # F
+        self.assertEqual(TonalidadAMIDI(0.8571428571428571)._calcular_nota_base(), 67)   # G
+        self.assertEqual(TonalidadAMIDI(0.9285714285714286)._calcular_nota_base(), 69)   # A
+        self.assertEqual(TonalidadAMIDI(1.0)._calcular_nota_base(), 71)                  # B
+
+    def test_obtener_escala(self):
+        self.assertEqual(TonalidadAMIDI(0.7).escala, [0, 2, 4, 5, 7, 9, 11, 12])
+        self.assertEqual(TonalidadAMIDI(0.2).escala, [0, 2, 3, 5, 7, 8, 10, 12])
+
+    def test_obtener_sostenidos(self):
+        self.assertEqual(TonalidadAMIDI(0.0).sostenidos, [])
+        self.assertEqual(TonalidadAMIDI(0.5).sostenidos, [4, 1, 5, 0, 9])
+        self.assertEqual(TonalidadAMIDI(0.2).sostenidos, [4, 1])
+
+    def test_generar_nota(self):
+        self.assertEqual(TonalidadAMIDI(0.0).generar_nota(0), 57)
+        self.assertEqual(TonalidadAMIDI(0.0).generar_nota(4), 64)
+
+        self.assertEqual(TonalidadAMIDI(0.714285).generar_nota(4), 70)
+        self.assertEqual(TonalidadAMIDI(0.714285).generar_nota(6), 74)
+
+        self.assertEqual(TonalidadAMIDI(0.428571).generar_nota(0), 65)
+        self.assertEqual(TonalidadAMIDI(0.428571).generar_nota(4), 71)
+
+    def test_generar_midi(self):
+        tonalidad_a_midi = TonalidadAMIDI(0.7)
+        nombre_archivo = "test_generar_midi.mid"
+        tonalidad_a_midi.generar_midi(nombre_archivo=nombre_archivo)
+        self.assertTrue(os.path.exists(nombre_archivo))
+        os.remove(nombre_archivo)
+
+if __name__ == '__main__':
+    #unittest.main()
+    tonalidad = TonalidadAMIDI(0.5)
+    tonalidad.generar_midi("prueba1.midi")
+
+    tonalidad = TonalidadAMIDI(0.0)
+    tonalidad.generar_midi("prueba2.midi")
+
+    tonalidad = TonalidadAMIDI(1.0)
+    tonalidad.generar_midi("prueba3.midi")
+
