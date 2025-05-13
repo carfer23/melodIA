@@ -6,7 +6,8 @@ import random
 
 class ParamsAMIDI:
 
-    def __init__(self, tonalidad_value, tempo=120, duracion_media=1, sigma=0.7, velocidad_media=64, densidad_media=1):
+    def __init__(self, tonalidad_value, tempo=120, duracion_media=1, sigma=0.7,
+                  velocidad_media=64, densidad_media=1, caracter_melodico=0.5):
         """
         Inicializa la clase con los parámetros de tonalidad, tempo, y duración total del MIDI.
 
@@ -20,6 +21,7 @@ class ParamsAMIDI:
         self.tonalidad_mayor = tonalidad_value > 0.5
         self.velocity_media = velocidad_media
         self.densidad_media = densidad_media
+        self.caracter_melodico = caracter_melodico
 
         # Calcula la nota base y la escala de acuerdo con la tonalidad.
         self.nota_base = self._calcular_nota_base()
@@ -92,6 +94,20 @@ class ParamsAMIDI:
     def _obtener_escala(self):
         return [0, 2, 4, 5, 7, 9, 11, 12] if self.tonalidad_mayor else [0, 2, 3, 5, 7, 8, 10, 12]
 
+    def _elegir_direccion(self):
+        if self.caracter_melodico == 0.5:
+            return random.choice([1, -1])  # Aleatorio, puede ir hacia arriba o hacia abajo.
+
+        # Si caracter_melodico > 0.5, favorecemos ascendente (1)
+        # Si caracter_melodico < 0.5, favorecemos descendente (-1)
+        direccion_preferida = 1 if self.caracter_melodico > 0.5 else -1
+
+        # Generamos una probabilidad aleatoria para decidir si nos quedamos con la dirección preferida
+        if random.random() < abs(self.caracter_melodico - 0.5):  # La probabilidad aumenta cuanto más lejos esté de 0.5
+            return direccion_preferida
+        else:
+            return -direccion_preferida  # Si no, cambiamos la dirección
+
     def _obtener_sostenidos(self):
         cantidad_sostenidos = int(self.tonalidad_value * 11)
         sostenidos_por_tonalidad = {
@@ -110,17 +126,61 @@ class ParamsAMIDI:
         }
         return sostenidos_por_tonalidad.get(cantidad_sostenidos, [])
 
+
     def generar_nota(self, nota_relativa):
+        """
+        Genera una nota ajustada a la dirección melódica y tonalidad, con saltos aleatorios de intervalo.
+        """
+        # Calculamos la nota base según la escala
         nota = self.nota_base + self.escala[nota_relativa]
+        
+        # Si la tonalidad es mayor, se añaden sostenidos
         if self.tonalidad_mayor:
             if nota_relativa in self.sostenidos:
                 nota += 1
         else:
+            # Si no es mayor, ajustamos de acuerdo con la tonalidad menor
             indices_validos = [i for i in [0, 3, 5, 7, 10] if i < len(self.escala)]
             notas_a_subir = [self.escala[i] for i in indices_validos[:min(len(self.sostenidos), len(indices_validos))]]
+            
+            # Si la nota pertenece a las que deben ser sostenidas en tonalidad menor, ajustamos
             if self.escala[nota_relativa] in notas_a_subir:
                 nota += 1
-        return nota
+
+        # Elegir la dirección de la melodía (ascendente o descendente)
+        direccion = self._elegir_direccion()
+
+        # Crear la lista completa de notas disponibles (incluyendo sostenidos si es necesario)
+        todas_las_notas = [self.nota_base + self.escala[i] for i in range(len(self.escala))]
+
+        if self.tonalidad_mayor:
+            todas_las_notas = [nota + 1 if i in self.sostenidos else nota for i, nota in enumerate(todas_las_notas)]
+
+        # Encontrar el índice de la nota actual
+        if nota not in todas_las_notas:
+            return nota  # Si la nota actual no está en la lista, la devolvemos tal cual.
+
+        indice_actual = todas_las_notas.index(nota)
+
+        # Filtrar las notas disponibles según la dirección (ascendente o descendente)
+        if direccion == 1:
+            notas_posibles = todas_las_notas[indice_actual + 1:]  # Notas ascendentes
+        elif direccion == -1:
+            notas_posibles = todas_las_notas[:indice_actual]  # Notas descendentes
+        else:
+            return nota  # Si no se pudo elegir dirección, devolvemos la nota actual
+
+        # Si no hay notas posibles, devolvemos la actual
+        if not notas_posibles:
+            return nota
+
+        # Seleccionamos aleatoriamente una nueva nota dentro de las posibles
+        siguiente_nota = random.choice(notas_posibles)
+
+        return siguiente_nota
+
+
+    
 
     def generar_midi(self, nombre_archivo="tonalidad.mid", instrumento=0, duracion_total=10):
         """
@@ -276,17 +336,25 @@ class TestParamsAMIDI(unittest.TestCase):
 if __name__ == '__main__':
     #unittest.main()
 
-    params_baja_densidad = ParamsAMIDI(0.5, tempo=120, duracion_media=1, densidad_media=0.2)  # Densidad baja
-    params_baja_densidad.generar_midi("baja_densidad.mid")
-
-    params_alta_densidad = ParamsAMIDI(0.5, tempo=120, duracion_media=1, densidad_media=0.8)  # Densidad alta
-    params_alta_densidad.generar_midi("alta_densidad.mid")
-
-    params_media_densidad = ParamsAMIDI(0.5, tempo=120, duracion_media=1, densidad_media=0.5)  # Densidad intermedia
-    params_media_densidad.generar_midi("densidad_media.mid")
-
-    params_max_densidad = ParamsAMIDI(0.5, tempo=120, duracion_media=1, densidad_media=1.0)  # Densidad máxima
-    params_max_densidad.generar_midi("densidad_maxima.mid")
+        # Función para generar archivos MIDI con diferentes valores de 'caracter_melodico'
+    def generar_midis_con_caracter_melodico():
+        caracter_melodico_values = [0.0, 0.25, 0.5, 0.75, 1.0]  # Diferentes valores de caracter melódico
+        
+        for caracter_melodico in caracter_melodico_values:
+            print(f"Generando MIDI con caracter melódico: {caracter_melodico}")
+            
+            # Crear una instancia de ParamsAMIDI con un caracter melódico específico
+            params = ParamsAMIDI(tonalidad_value=0.5, tempo=120, duracion_media=1, densidad_media=0.5, caracter_melodico=caracter_melodico)
+            
+            # Nombre de archivo basado en el valor de 'caracter_melodico'
+            nombre_archivo = f"midi_caracter_{caracter_melodico}.mid"
+            
+            # Generar el archivo MIDI
+            params.generar_midi(nombre_archivo=nombre_archivo)
+            print(f"Archivo generado: {nombre_archivo}\n")
+        
+    # Llamar a la función para generar los MIDI
+    generar_midis_con_caracter_melodico()
 
 
 
