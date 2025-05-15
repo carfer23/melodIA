@@ -1,7 +1,6 @@
+<img src="https://github.com/user-attachments/assets/c797144c-c110-46cd-9fac-92d0d9f20312" alt="melodIA" width="100" style="border-radius: 10px;"/>
+
 # melodIA
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/c797144c-c110-46cd-9fac-92d0d9f20312" width="350"/>
-</p>
 
 1) imagen->texto
 2) texto->prompt audio
