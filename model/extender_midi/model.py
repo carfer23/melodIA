@@ -10,7 +10,7 @@ import tensorflow as tf
 import librosa
 from IPython import display
 
-MAESTRO_PATH = "../maestro-v3.0.0/"
+MAESTRO_PATH = "data/maestro-v3.0.0/"
 MODEL_PATH = 'melodIAmodel.keras'
 
 COLUMNS = ["pitch", "step", "duration", "velocity"]
