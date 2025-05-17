@@ -4,11 +4,11 @@ import requests
 API_KEY = '9KqFI5k0CtGFM1BssZ94KYpKovCBmzSuzCMspbL6TcPx2PflMM1jEmJm'
 HEADERS = {'Authorization': API_KEY}
 SEARCH_TERMS = [
-    "stormy sky", "rainy sky", "bright sky",
-    "rainbow", "starry night", "cloudy sky",
-    "thunderstorm", "sunset with clouds"
+    "thunderstorm", "rainy sky", "bright sunny sky",
+    "rainbow", "starry night", "clouds",
+    "sunset", "snow"
 ]
-PER_PAGE = 30
+PER_PAGE = 300
 DOWNLOAD_DIR = "pexels_cielos_varios"
 
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)

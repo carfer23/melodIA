@@ -290,7 +290,7 @@ class ParamsAMIDI:
         midi.write(nombre_archivo)
         print(f"Archivo MIDI generado: {nombre_archivo}")
 
-def generar_parametros_cielo(tipo_cielo):
+def generar_parametros_cielo(filename):
     """
     Genera diccionarios de parámetros MIDI basados en el tipo de cielo.
 
@@ -300,115 +300,69 @@ def generar_parametros_cielo(tipo_cielo):
     Returns:
         dict: Un diccionario con los parámetros MIDI.
     """
-    parametros = {}
-    if tipo_cielo == "soleado":
-        parametros = {
-            "tonalidad_value": 0.7,
-            "tempo": 120,
-            "duracion_media": 0.5,
-            "sigma": 0.4,
-            "velocidad_media": 0.7,
-            "densidad_media": 0.6,
-            "caracter_melodico": 0.7,
-            "usar_acordes": False, # No acordes para melodía simple
-            "proporcion_acordes": 0,
-            "rango_octavas": 2
+    resultado = {}
+    if filename == "noche.jpeg":
+        resultado = {
+            'tonalidad_value': 0.173401857647427,
+            'tempo': 60.0,
+            'duracion_media': 2.332972439236705,
+            'sigma': 0.794629937748768,
+            'velocidad_media': 0.7058401363070101,
+            'densidad_media': 0.49661800355549396,
+            'caracter_melodico': 0.5853888627107341,
+            'usar_acordes': 1.0,
+            'proporcion_acordes': 0.5210013624425488,
+            'rango_octavas': 1.0
         }
-    elif tipo_cielo == "nublado":
-        parametros = {
-            "tonalidad_value": 0.3,
-            "tempo": 90,
-            "duracion_media": 1,
-            "sigma": 0.6,
-            "velocidad_media": 0.4,
-            "densidad_media": 0.4,
-            "caracter_melodico": 0.5,
-            "usar_acordes": False,
-            "proporcion_acordes": 0,
-            "rango_octavas": 1
+    elif filename == "lluvia.jpeg":
+        resultado = {
+            'tonalidad_value': 0.18511513287057274,
+            'tempo': 104.0,
+            'duracion_media': 1.6200326409067443,
+            'sigma': 0.5971889966624578,
+            'velocidad_media': 0.7338613530265905,
+            'densidad_media': 0.6304160343296756,
+            'caracter_melodico': 0.631621221984135,
+            'usar_acordes': 0.0,
+            'proporcion_acordes': 0.20133991297536086,
+            'rango_octavas': 1.0
         }
-    elif tipo_cielo == "tormentoso":
-        parametros = {
-            "tonalidad_value": 0.1,
-            "tempo": 160,
-            "duracion_media": 0.25,
-            "sigma": 0.8,
-            "velocidad_media": 0.9,
-            "densidad_media": 0.9,
-            "caracter_melodico": 0.3,
-            "usar_acordes": True, # Acordes para intensidad
-            "proporcion_acordes": 0.5, # Proporción alta de acordes
-            "rango_octavas": 3
+    elif filename == "soleado.jpeg":
+        resultado = {
+            'tonalidad_value': 0.6038577728765497,
+            'tempo': 103.0,
+            'duracion_media': 1.0922498772548028,
+            'sigma': 0.328964091631769,
+            'velocidad_media': 0.8672986591368046,
+            'densidad_media': 0.6260613316977481,
+            'caracter_melodico': 0.7436377055721527,
+            'usar_acordes': 1.0,
+            'proporcion_acordes': 0.6136732727495986,
+            'rango_octavas': 2.0
         }
-    elif tipo_cielo == "atardecer":
-        parametros = {
-            "tonalidad_value": 0.6,
-            "tempo": 80,
-            "duracion_media": 1.5,
-            "sigma": 0.5,
-            "velocidad_media": 0.3,
-            "densidad_media": 0.3,
-            "caracter_melodico": 0.4,
-            "usar_acordes": False,
-            "proporcion_acordes": 0,
-            "rango_octavas": 1
+    elif filename == "tormenta.jpeg":
+        resultado = {
+            'tonalidad_value': 0.1512525447110794,
+            'tempo': 142.0,
+            'duracion_media': 2.000874726495423,
+            'sigma': 0.8016621408469216,
+            'velocidad_media': 0.7626121104479034,
+            'densidad_media': 0.8491398506454925,
+            'caracter_melodico': 0.6451232638991419,
+            'usar_acordes': 0.0,
+            'proporcion_acordes': 0.14357213470301866,
+            'rango_octavas': 1.0
         }
-    elif tipo_cielo == "noche estrellada":
-        parametros = {
-            "tonalidad_value": 0.85,
-            "tempo": 70,
-            "duracion_media": 2,
-            "sigma": 0.7,
-            "velocidad_media": 0.2,
-            "densidad_media": 0.2,
-            "caracter_melodico": 0.6,
-            "usar_acordes": False,
-            "proporcion_acordes": 0,
-            "rango_octavas": 2
-        }
-    elif tipo_cielo == "lluvia":
-        parametros = {
-            "tonalidad_value": 0.4,
-            "tempo": 100,
-            "duracion_media": 0.25,
-            "sigma": 0.3,
-            "velocidad_media": 0.5,
-            "densidad_media": 0.7,
-            "caracter_melodico": 0.5,
-            "usar_acordes": False, # Solo notas sueltas
-            "proporcion_acordes": 0,
-            "rango_octavas": 1
-        }
-    elif tipo_cielo == "arcoiris":
-        parametros = {
-            "tonalidad_value": 0.9,
-            "tempo": 110,
-            "duracion_media": 0.75,
-            "sigma": 0.6,
-            "velocidad_media": 0.6,
-            "densidad_media": 0.5,
-            "caracter_melodico": 0.8,
-            "usar_acordes": True, # Acordes para variedad de color
-            "proporcion_acordes": 0.3,
-            "rango_octavas": 2
-        }
-    elif tipo_cielo == "noche tenebrosa":
-        parametros = {
-            "tonalidad_value": 0.05,
-            "tempo": 80,
-            "duracion_media": 1.5,
-            "sigma": 0.4,
-            "velocidad_media": 0.3,
-            "densidad_media": 0.1,
-            "caracter_melodico": 0.4,
-            "usar_acordes": False,
-            "proporcion_acordes": 0,
-            "rango_octavas": 1
-        }
-    return parametros
+    else:
+        resultado = None
+
+
+    return resultado
 
 if __name__ == '__main__':
-    tipos_de_cielo = ["soleado", "nublado", "tormentoso", "atardecer", "noche estrellada", "lluvia", "arcoiris", "noche tenebrosa"]
+    tipos_de_cielo = ["noche.jpeg", "lluvia.jpeg", "tormenta.jpeg", "soleado.jpeg"
+    
+]
     for tipo in tipos_de_cielo:
         parametros = generar_parametros_cielo(tipo)
         print(f"Parámetros para cielo '{tipo}': {parametros}")

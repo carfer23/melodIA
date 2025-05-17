@@ -50,6 +50,9 @@ class FotoAMIDI:
         else:
             salida = self.modelo.predict(entrada)[0]
 
+        if self.scaler:
+            salida = self.scaler.inverse_transform([salida])[0]
+
         salida = clip_parametros(salida)
         return dict(zip(self.nombres_parametros, salida))
 
@@ -99,10 +102,15 @@ if __name__ == '__main__':
     modelo = FotoAMIDI(modelo_ruta="modelo_regresion_midi.h5", usar_clip=True)
     modelo.train(rutas_imagenes, parametros_midi, epochs=100, batch_size=32, validation_split=0.2)
 
-    # Para predecir con una imagen fuera del entrenamiento:
-    IMAGE_PATH = "datos/pexels_sky_images/3590.jpg"
+    import os
     from PIL import Image
-    imagen = Image.open(IMAGE_PATH)
-    prediccion = modelo.predict(imagen)
-    print(prediccion)
+
+    TEST_FOLDER = "datos/test"
+    for filename in os.listdir(TEST_FOLDER):
+        if filename.lower().endswith((".png", ".jpg", ".jpeg")):
+            image_path = os.path.join(TEST_FOLDER, filename)
+            imagen = Image.open(image_path)
+            prediccion = modelo.predict(imagen)
+            print(f"{filename}: {prediccion}")
+
 

@@ -347,87 +347,88 @@ if __name__ == '__main__':
             dict: Un diccionario con los parámetros MIDI correspondientes al tipo de cielo.
         """
         parametros = {}
-        if tipo_cielo == "soleado":
+        if tipo_cielo == "thunderstorm":
             parametros = {
-                "tonalidad_value": 0.7,  # Mayor, brillante
-                "tempo": 120,          # Moderado, alegre
-                "duracion_media": 0.5,  # Notas cortas y ágiles
-                "sigma": 0.4,          # Poca variación en la duración
-                "velocidad_media": 0.7,  # Moderado a brillante
-                "densidad_media": 0.6,  # Moderada densidad, sensación de energía
-                "caracter_melodico": 0.7   # Predominantemente ascendente, optimista
+                "tonalidad_value": 0.1,
+                "tempo": 110,
+                "duracion_media": 1.4,
+                "sigma": 0.85,
+                "velocidad_media": 0.7,
+                "densidad_media": 0.8,
+                "caracter_melodico": 0.35
             }
-        elif tipo_cielo == "nublado":
+        elif tipo_cielo == "rainy sky":
             parametros = {
-                "tonalidad_value": 0.3,  # Menor, melancólico pero suave
-                "tempo": 90,           # Moderado, un poco más lento
-                "duracion_media": 1,    # Notas un poco más largas, sensación de continuidad
-                "sigma": 0.6,          # Variación moderada
-                "velocidad_media": 0.4,  # Suave, sin ser apagado
-                "densidad_media": 0.4,  # Densidad media, sin ser abrumador
-                "caracter_melodico": 0.5   # Movimiento melódico más horizontal
+                "tonalidad_value": 0.25,
+            "tempo": 80,
+            "duracion_media": 1.75,
+            "sigma": 0.7,
+            "velocidad_media": 0.6,
+            "densidad_media": 0.35,
+            "caracter_melodico": 0.4
+        }
+        elif tipo_cielo == "bright sunny sky":
+            parametros = {
+                "tonalidad_value": 0.8,
+                "tempo": 130,
+                "duracion_media": 1.0,
+                "sigma": 0.35,
+                "velocidad_media": 0.8,
+                "densidad_media": 0.55,
+                "caracter_melodico": 0.65
             }
-        elif tipo_cielo == "tormentoso":
+        elif tipo_cielo == "rainbow":
             parametros = {
-                "tonalidad_value": 0.1,  # Menor, oscuro, dramático
-                "tempo": 160,          # Rápido, agitado
-                "duracion_media": 0.25, # Notas cortas y rápidas, con algunas más largas para impacto
-                "sigma": 0.8,          # Gran variación en la duración
-                "velocidad_media": 0.9,  # Fuerte, dramático
-                "densidad_media": 0.9,  # Alta densidad, sensación de caos
-                "caracter_melodico": 0.3   # Movimiento errático, con tendencia descendente en momentos de calma tensa
+                "tonalidad_value": 0.85,
+                "tempo": 130,
+                "duracion_media": 0.8,
+                "sigma": 0.25,
+                "velocidad_media": 0.85,
+                "densidad_media": 0.55,
+                "caracter_melodico": 0.65
             }
-        elif tipo_cielo == "atardecer":
+        elif tipo_cielo == "starry night":
             parametros = {
-                "tonalidad_value": 0.6,  # Mayor, pero con un toque melancólico
-                "tempo": 80,           # Lento, reflexivo
-                "duracion_media": 1.5,  # Notas largas, sensación de pausa
-                "sigma": 0.5,          # Variación suave
-                "velocidad_media": 0.3,  # Suave, delicado
-                "densidad_media": 0.3,  # Baja densidad, espacio para la reflexión
-                "caracter_melodico": 0.4   # Predominantemente descendente, sensación de final del día
+                "tonalidad_value": 0.35,
+                "tempo": 70,
+                "duracion_media": 2.25,
+                "sigma": 0.75,
+                "velocidad_media": 0.6,
+                "densidad_media": 0.35,
+                "caracter_melodico": 0.45
             }
-        elif tipo_cielo == "noche estrellada":
+        elif tipo_cielo == "clouds":
             parametros = {
-                "tonalidad_value": 0.85, # Mayor, misterioso y brillante a la vez
-                "tempo": 70,           # Lento, contemplativo
-                "duracion_media": 2,    # Notas largas, espaciadas
-                "sigma": 0.7,          # Variación moderada para algunas notas más cortas (estrellas fugaces)
-                "velocidad_media": 0.2,  # Muy suave, delicado
-                "densidad_media": 0.2,  # Muy baja densidad, como estrellas en la oscuridad
-                "caracter_melodico": 0.6   # Ligeramente ascendente, sensación de infinitud
+                "tonalidad_value": 0.5,
+                "tempo": 100,
+                "duracion_media": 1.3,
+                "sigma": 0.45,
+                "velocidad_media": 0.65,
+                "densidad_media": 0.45,
+                "caracter_melodico": 0.45
             }
-        elif tipo_cielo == "lluvia":
+        elif tipo_cielo == "sunset":
             parametros = {
-                "tonalidad_value": 0.4,  # Menor, pero no del todo triste, más bien introspectivo
-                "tempo": 100,          # Moderado, constante
-                "duracion_media": 0.25,  # Notas cortas y repetitivas (como las gotas)
-                "sigma": 0.3,          # Poca variación en la duración, ritmo constante
-                "velocidad_media": 0.5,  # Moderado, sin ser ni muy fuerte ni muy suave
-                "densidad_media": 0.7,  # Densidad moderada a alta, dependiendo de la intensidad de la lluvia
-                "caracter_melodico": 0.5   # Melodía plana, con ligeras fluctuaciones
+                "tonalidad_value": 0.65,
+                "tempo": 110,
+                "duracion_media": 1.3,
+                "sigma": 0.4,
+                "velocidad_media": 0.75,
+                "densidad_media": 0.45,
+                "caracter_melodico": 0.45
             }
-        elif tipo_cielo == "arcoiris":
+        elif tipo_cielo == "snow":
             parametros = {
-                "tonalidad_value": 0.9,  # Mayor, muy alegre y brillante
-                "tempo": 110,          # Moderado, un poco animado
-                "duracion_media": 0.75,  # Duraciones medias, ni muy cortas ni muy largas
-                "sigma": 0.6,          # Variación moderada, representando la variedad de colores
-                "velocidad_media": 0.6,  # Moderado, alegre
-                "densidad_media": 0.5,  # Densidad media, no abrumador pero presente
-                "caracter_melodico": 0.8   # Melodía ascendente y descendente, como un arco
-            }
-        elif tipo_cielo == "noche tenebrosa":
-            parametros = {
-                "tonalidad_value": 0.05, # Menor, muy oscuro y misterioso
-                "tempo": 80,           # Lento, pausado
-                "duracion_media": 1.5,  # Notas largas y sostenidas
-                "sigma": 0.4,          # Poca variación, sensación de quietud
-                "velocidad_media": 0.3,  # Suave, apenas audible
-                "densidad_media": 0.1,  # Muy baja densidad, mucho silencio
-                "caracter_melodico": 0.4   # Melodía descendente, sensación de profundidad
+                "tonalidad_value": 0.25,
+                "tempo": 80,
+                "duracion_media": 1.05,
+                "sigma": 0.45,
+                "velocidad_media": 0.9,
+                "densidad_media": 0.55,
+                "caracter_melodico": 0.45
             }
         return parametros
+
 
     tipos_de_cielo = ["soleado", "nublado", "tormentoso", "atardecer", "noche estrellada", "lluvia", "arcoiris", "noche tenebrosa"]
     for tipo in tipos_de_cielo:
