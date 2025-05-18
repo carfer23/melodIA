@@ -1,3 +1,7 @@
+"""Script de prueba para extender un archivo MIDI con el modelo preentrenado de Magenta MelodyRNN.
+Usamos este script para probar a llamarlo desde un script LUA de ReaScipt pero no conseguimos que funcionara.
+El script LUA de prueba se encuentra en proyecto_reaper/Scripts/prueba-nofunciona.lua"""
+
 from note_seq import midi_file_to_note_sequence
 from magenta.models.melody_rnn import melody_rnn_sequence_generator
 from magenta.models.shared import sequence_generator_bundle

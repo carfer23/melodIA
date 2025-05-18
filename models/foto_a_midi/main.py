@@ -70,7 +70,6 @@ class FotoAMIDI:
             salida = self.modelo.predict(entrada)[0]
 
         if self.scaler:
-            print("ñsdjkfaksj")
             salida = self.scaler.inverse_transform([salida])[0]
 
         salida = clip_parametros(salida)

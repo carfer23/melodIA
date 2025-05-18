@@ -112,8 +112,9 @@ class ParamsAMIDI:
 
     def _calcular_nota_base(self):
         """Calcula la nota base."""
-        notas = [57, 59, 61, 62, 64, 66, 68,  # a, b, c, d, e, f, g
-                60, 62, 64, 65, 67, 69, 71]  # C, D, E, F, G, A, B
+        # notas = [57, 59, 61, 62, 64, 66, 68,  # a, b, c, d, e, f, g
+        #         60, 62, 64, 65, 67, 69, 71]  # C, D, E, F, G, A, B
+        notas = [45, 47, 49, 50, 52, 54, 56, 48, 50, 52, 53, 55,57,59]
         index = int(self.tonalidad_value * 14) - 1
         index = max(0, index)
         return notas[index]
