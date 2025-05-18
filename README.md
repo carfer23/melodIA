@@ -2,9 +2,36 @@
 
 # melodIA
 
-1) imagen->texto
-2) texto->prompt audio
-3) prompt audio -> genera midi magenta
-4) midi -> extiende (melodyRNN)
-5) extendido -> cb instrumentos (DDPS)
-6) fichero midi + configuración -> plugin Reaper (ReaScript)
+## Integrantes
+
+- Carmen Fernández González
+- María Romero Huertas
+
+## Descripción del proyecto
+
+Para este proyecto, hemos querido llevar al ámbito musical algunos de los conocimientos que hemos adquirido en nuestra carrera (Ingeniería de Datos e IA). Aunque no habíamos trabajado antes con IA aplicada a la música, nos pareció una forma interesante de combinar lo aprendido en la asignatura con lo aprendido en nuestro grado. 
+
+## Estructura del repositorio
+COMPLETAR
+
+## Instrucciones de instalación
+
+En primer lugar, clona el repositorio de este proyecto en la carpeta local de tu dispositivo donde desees guardarlo. Utiliza el siguiente comando:
+
+```
+git clone https://github.com/carfer23/melodIA.git
+```
+
+o apóyate en aplicaciones como GitHub Desktop o Git Bash.
+
+Para acceder a la carpeta del proyecto, ejecuta la instrucción:
+
+```
+cd melodIA
+```
+
+Por último, instala las dependencias necesarias:
+
+```
+pip install -r requirements.txt
+```
