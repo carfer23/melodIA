@@ -31,7 +31,21 @@ También otro generado con una imagen de un paisaje nevado:
 https://github.com/user-attachments/assets/c0702452-0e6a-44d8-bee0-47f4a248a390
 
 ## Estructura del repositorio
-COMPLETAR
+```
+melodIA/
+├── models/
+├      ├── extender_midi/       # Modelo que dado un archivo MIDI genera nuevas notas para extenderlo
+├      ├── foto_a_midi/         # Modelo que dada una imagen genera un archivo MIDI
+├      ├── melodyrnn/           # Prueba inicial realizada con un modelo sencillo preentrenado de Magenta
+├      ├── pretrained_models/   # Modelos entrenados disponibles para realizar predicciones
+├── proyecto_reaper/            # Proyecto de Reaper con los ejemplos anteriores (noche y nieve)
+├── .gitignore              
+├── README.md               
+├── melodIA.ipynb               # Notebook principal con el flujo de trabajo completo
+├── midi_nieve.mid              # Ejemplo de archivo MIDI generado y extendido
+├── prueba_nieve.mid            # Ejemplo de archivo MIDI generado
+└── requirements.txt            # Dependencias del proyecto
+```
 
 ## Instrucciones de instalación
 
