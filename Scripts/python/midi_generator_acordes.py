@@ -226,7 +226,7 @@ class ParamsAMIDI:
             
             return acorde_transpuesto
 
-    def generar_midi(self, nombre_archivo="tonalidad.mid", instrumento=0, duracion_total=10):
+    def generar_midi(self, nombre_archivo="tonalidad.mid", instrumento=0, duracion_total=20):
         """
         Genera un archivo MIDI con las notas y duración especificadas.
 
