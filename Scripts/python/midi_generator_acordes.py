@@ -6,9 +6,7 @@ class ParamsAMIDI:
     """
     Genera archivos MIDI a partir de parámetros que describen características musicales.
     """
-    def __init__(self, tonalidad_value, tempo=120, duracion_media=1, sigma=0.7,
-                 velocidad_media=64, densidad_media=1, caracter_melodico=0.5,
-                 usar_acordes=False, proporcion_acordes=0.2, rango_octavas=2): # Añadidos parámetros
+    def __init__(self, tonalidad_value=0.8, tempo=120, duracion_media=1, sigma=0.5, velocidad_media=0.7, densidad_media=1,caracter_melodico=0.8,usar_acordes=1, proporcion_acordes=0.5, rango_octavas=1): # Añadidos parámetros
         """
         Inicializa la clase con los parámetros de tonalidad, tempo, y duración del MIDI.
 

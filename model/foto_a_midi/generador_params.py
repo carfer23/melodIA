@@ -2,64 +2,32 @@ import numpy as np
 import glob
 import os
 
-# Prefijos y función generadora asociada
-prefijos_generadores = {
-    "thunderstorm": lambda: [
-        np.random.uniform(0.0, 0.1), np.random.randint(130, 160), np.random.uniform(2.0, 2.5),
-        np.random.uniform(0.8, 1.0), np.random.uniform(0.7, 1.0), np.random.uniform(0.9, 1.0),
-        np.random.uniform(0.5, 0.7), 0, 0.0, np.random.randint(1, 2)
-    ],
-    "rainy_sky": lambda: [
-        np.random.uniform(0.1, 0.2), np.random.randint(90, 110), np.random.uniform(1.8, 2.2),
-        np.random.uniform(0.6, 0.8), np.random.uniform(0.5, 0.7), np.random.uniform(0.5, 0.6),
-        np.random.uniform(0.5, 0.7), 0, 0.0, np.random.randint(1, 2)
-    ],
-    "bright_sunny_sky": lambda: [
-        np.random.uniform(0.9, 1.0), np.random.randint(140, 160), np.random.uniform(0.4, 0.7),
-        np.random.uniform(0.1, 0.2), np.random.uniform(0.9, 1.0), np.random.uniform(0.6, 0.8),
-        np.random.uniform(0.9, 1.0), 1, np.random.uniform(0.6, 0.8), np.random.randint(3, 4)
-    ],
-    "rainbow": lambda: [
-        np.random.uniform(0.8, 1.0), np.random.randint(120, 140), np.random.uniform(0.5, 0.8),
-        np.random.uniform(0.2, 0.3), np.random.uniform(0.8, 1.0), np.random.uniform(0.6, 0.8),
-        np.random.uniform(0.9, 1.0), 1, np.random.uniform(0.7, 0.8), np.random.randint(3, 4)
-    ],
-    "starry_night": lambda: [
-        np.random.uniform(0.2, 0.3), np.random.randint(60, 80), np.random.uniform(2.5, 3.0),
-        np.random.uniform(0.8, 1.0), np.random.uniform(0.6, 0.7), np.random.uniform(0.4, 0.5),
-        np.random.uniform(0.5, 0.7), 1, np.random.uniform(0.5, 0.6), np.random.randint(2, 3)
-    ],
-    "clouds": lambda: [
-        np.random.uniform(0.4, 0.5), np.random.randint(90, 110), np.random.uniform(1.4, 1.6),
-        np.random.uniform(0.5, 0.6), np.random.uniform(0.6, 0.7), np.random.uniform(0.5, 0.6),
-        np.random.uniform(0.6, 0.7), 1, np.random.uniform(0.5, 0.6), np.random.randint(2, 3)
-    ],
-    "sunset": lambda: [
-        np.random.uniform(0.7, 0.9), np.random.randint(110, 130), np.random.uniform(1.5, 2.0),
-        np.random.uniform(0.4, 0.5), np.random.uniform(0.7, 0.9), np.random.uniform(0.5, 0.6),
-        np.random.uniform(0.7, 0.9), 1, np.random.uniform(0.6, 0.7), np.random.randint(2, 3)
-    ],
-    "snow": lambda: [
-        np.random.uniform(0.2, 0.3), np.random.randint(70, 90), np.random.uniform(1.0, 1.3),
-        np.random.uniform(0.4, 0.5), np.random.uniform(0.8, 1.0), np.random.uniform(0.6, 0.7),
-        np.random.uniform(0.6, 0.8), 1, np.random.uniform(0.5, 0.6), np.random.randint(2, 3)
-    ]
-}
+class MidiParamsGenerator:
+    """
+    Genera parámetros MIDI y rutas de imágenes basados en prefijos
+    y funciones generadoras proporcionados por el usuario.
+    """
 
+    def __init__(self, prefijos_generadores, image_folder="./datos/pexels_cielos_varios"):
+        self.prefijos_generadores = prefijos_generadores
+        self.image_folder = image_folder
+        self.parametros_midi = []
+        self.rutas_imagenes = []
 
+    def generar_parametros_y_rutas(self):
+        """Busca imágenes por prefijo y genera parámetros MIDI asociados."""
+        for prefijo, generador in self.prefijos_generadores.items():
+            patrones = os.path.join(self.image_folder, f"{prefijo}*")
+            for ruta in glob.glob(patrones):
+                self.rutas_imagenes.append(ruta)
+                self.parametros_midi.append(generador())
 
+    def guardar_parametros(self, filename="parametros_midi.npy"):
+        """Guarda los parámetros MIDI generados en un archivo .npy."""
+        np.save(filename, np.array(self.parametros_midi))
 
-# Ruta donde están las imágenes
-ruta_imagenes = "./datos/pexels_cielos_varios"
-parametros_midi = []
-rutas_imagenes = []
-
-for prefijo, generador in prefijos_generadores.items():
-    for ruta in glob.glob(os.path.join(ruta_imagenes, f"{prefijo}*")):
-        rutas_imagenes.append(ruta)
-        parametros_midi.append(generador())
-
-# Guardar resultados
-np.save("parametros_midi.npy", np.array(parametros_midi))
-with open("rutas_imagenes.txt", "w") as f:
-    f.writelines([ruta + "\n" for ruta in rutas_imagenes])
+    def guardar_rutas(self, filename="rutas_imagenes.txt"):
+        """Guarda las rutas de las imágenes en un archivo de texto."""
+        with open(filename, "w") as f:
+            for ruta in self.rutas_imagenes:
+                f.write(ruta + "\n")
