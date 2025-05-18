@@ -11,7 +11,6 @@ import librosa
 from IPython import display
 
 MAESTRO_PATH = "data/maestro-v3.0.0/"
-MODEL_PATH = 'melodIAmodel.keras'
 
 COLUMNS = ["pitch", "step", "duration", "velocity"]
 
@@ -32,15 +31,14 @@ class MelodIAModel:
     """
 
     @staticmethod
-    def load_model():
+    def load_model(path):
         """
         Carga el modelo.
         """
         tf.keras.utils.get_custom_objects().update({'mse_with_positive_pressure': MelodIAModel.mse_with_positive_pressure})
         try:
-            model = tf.keras.models.load_model(MODEL_PATH)
-            print(f"Modelo cargado desde: {MODEL_PATH}")
-            model.summary()
+            model = tf.keras.models.load_model(path)
+            print(f"Modelo cargado desde: {path}")
         except Exception as e:
             print(f"Error al cargar el modelo: {e}")
         return model
@@ -469,3 +467,41 @@ class Utilities:
             loaded_arrays = [data[key] for key in data.files]
         print(f"Cargados {len(loaded_arrays)} arrays.")
         return loaded_arrays
+    
+    import pretty_midi
+
+    def concatenate_pretty_midi(pm1: pretty_midi.PrettyMIDI, pm2: pretty_midi.PrettyMIDI) -> pretty_midi.PrettyMIDI:
+        """
+        Combina dos archivos MIDI. El archivo pm2 se "concatenará" después del pm1.
+        """
+        # Calcular la duración del primer MIDI
+        end_time_pm1 = pm1.get_end_time()
+
+        # Crear una copia del segundo MIDI y desplazar todo
+        pm2_shifted = pretty_midi.PrettyMIDI()
+        for instr in pm2.instruments:
+            new_instr = pretty_midi.Instrument(program=instr.program, is_drum=instr.is_drum, name=instr.name)
+            # Mover notas
+            for note in instr.notes:
+                new_note = pretty_midi.Note(
+                    velocity=note.velocity,
+                    pitch=note.pitch,
+                    start=note.start + end_time_pm1,
+                    end=note.end + end_time_pm1
+                )
+                new_instr.notes.append(new_note)
+            # Mover control changes (por ejemplo pedal sustain)
+            for cc in instr.control_changes:
+                new_cc = pretty_midi.ControlChange(
+                    number=cc.number,
+                    value=cc.value,
+                    time=cc.time + end_time_pm1
+                )
+                new_instr.control_changes.append(new_cc)
+            pm2_shifted.instruments.append(new_instr)
+
+        # Crear nuevo objeto PrettyMIDI final
+        combined = pretty_midi.PrettyMIDI()
+        combined.instruments = pm1.instruments + pm2_shifted.instruments
+
+        return combined

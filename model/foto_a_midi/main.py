@@ -4,6 +4,7 @@ import clip
 from tensorflow import keras
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.losses import MeanSquaredError
 
 import numpy as np
 import tensorflow as tf
@@ -15,8 +16,6 @@ import os
 # Añade la carpeta actual al sys.path
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
-
-from tensorflow.keras.losses import MeanSquaredError
 from modelo import construir_modelo, clip_parametros
 from utils import cargar_imagen
 
@@ -50,11 +49,7 @@ class FotoAMIDI:
             return np.expand_dims(arr, axis=0)
 
     def load_modelo(self):
-        self.modelo = keras.models.load_model(
-            self.modelo_ruta,
-            custom_objects={'mse': MeanSquaredError()}
-        )
-
+        self.modelo = keras.models.load_model(self.modelo_ruta, compile=False)
 
     def predict(self, imagen):
         if self.modelo is None:
@@ -75,9 +70,6 @@ class FotoAMIDI:
 
         salida = clip_parametros(salida)
         return dict(zip(self.nombres_parametros, salida))
-
-    def load_modelo(self):
-        self.modelo = keras.models.load_model(self.modelo_ruta)
 
     def train(self, rutas_imagenes, parametros_midi, epochs=100, batch_size=32, validation_split=0.2, test_split=0.1):
         imagenes = []
@@ -132,5 +124,3 @@ if __name__ == '__main__':
             imagen = Image.open(image_path)
             prediccion = modelo.predict(imagen)
             print(f"{filename}: {prediccion}")
-
-
