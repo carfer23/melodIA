@@ -5,6 +5,7 @@ from tensorflow import keras
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.losses import MeanSquaredError
+import joblib
 
 import numpy as np
 import tensorflow as tf
@@ -66,6 +67,7 @@ class FotoAMIDI:
             salida = self.modelo.predict(entrada)[0]
 
         if self.scaler:
+            print("ñsdjkfaksj")
             salida = self.scaler.inverse_transform([salida])[0]
 
         salida = clip_parametros(salida)
@@ -87,7 +89,9 @@ class FotoAMIDI:
 
         y = np.array(parametros_midi)
         self.scaler = StandardScaler()
-        y = self.scaler.fit_transform(y)
+        scaler = self.scaler.fit(y)
+        y = self.scaler.transform(y)
+        joblib.dump(scaler, 'scaler.pkl')
 
         from sklearn.model_selection import train_test_split
         X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=test_split, random_state=42)
@@ -100,6 +104,9 @@ class FotoAMIDI:
 
         test_loss = self.modelo.evaluate(X_test, y_test, batch_size=batch_size)
         print(f"Pérdida en test: {test_loss}")
+
+        # Reentrenamos con todos los datos
+        history = self.modelo.fit(X, y, epochs=epochs, batch_size=batch_size)
 
         self.modelo.save(self.modelo_ruta)
 
