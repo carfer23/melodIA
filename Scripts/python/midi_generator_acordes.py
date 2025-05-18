@@ -365,4 +365,4 @@ if __name__ == '__main__':
         parametros = generar_parametros_cielo(tipo)
         print(f"Parámetros para cielo '{tipo}': {parametros}")
         params_amidi = ParamsAMIDI(**parametros)
-        params_amidi.generar_midi(nombre_archivo=f"cielo_{tipo}.mid")
+        params_amidi.generar_midi(nombre_archivo=f"{tipo}.mid")
