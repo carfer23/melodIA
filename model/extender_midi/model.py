@@ -17,10 +17,10 @@ COLUMNS = ["pitch", "step", "duration", "velocity"]
 
 RANDOM_STATE = 13
 _SAMPLING_RATE = 16000
-SEQUENCE_LENGTH = 128
+SEQUENCE_LENGTH = 25
 BATCH_SIZE = 64
 
-VELOCITY_MIN = 1
+VELOCITY_MIN = 0
 VELOCITY_MAX = 127
 PITCH_MIN = 0
 PITCH_MAX = 127
@@ -343,12 +343,17 @@ class Utilities:
         sns.histplot(notes, x="velocity", bins=20)
     
     @staticmethod
-    def get_sample_midi_path(df):
+    def get_sample_midi_path(df, random_state=None):
         """
         Obtiene una ruta a un archivo midi aleatorio.
         """
-        sample = df.sample(n=1, random_state=RANDOM_STATE, ignore_index=True)
-        sample_file_path = "../maestro-v3.0.0/" + sample.loc[0]["midi_filename"]
+        if random_state is None:
+            rs = RANDOM_STATE
+        else:
+            rs = random_state
+
+        sample = df.sample(n=1, random_state=rs, ignore_index=True)
+        sample_file_path = MAESTRO_PATH + sample.loc[0]["midi_filename"]
 
         composer = sample.loc[0]["canonical_composer"]
         title = sample.loc[0]["canonical_title"]
@@ -434,13 +439,12 @@ class Utilities:
 
         pm = pretty_midi.PrettyMIDI()
         instrument = pretty_midi.Instrument(
-            program=pretty_midi.instrument_name_to_program(
-                instrument_name))
+            program=pretty_midi.instrument_name_to_program(instrument_name))
 
-        prev_start = 0
+        #prev_start = 0
         for i, note in notes.iterrows():
-            start = float(prev_start + note['step'])
-            end = float(start + note['duration'])
+            start=float(note['start'])
+            end=float(note['end'])
             velocity = int(note['velocity'])
             pitch = int(note['pitch'])
 
@@ -451,7 +455,6 @@ class Utilities:
                 end=end,
             )
             instrument.notes.append(note)
-            prev_start = start
 
         pm.instruments.append(instrument)
         
