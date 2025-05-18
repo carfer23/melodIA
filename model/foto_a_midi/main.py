@@ -5,8 +5,21 @@ from tensorflow import keras
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+
+import sys
+import os
+
+# Añade la carpeta actual al sys.path
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
+
+from tensorflow.keras.losses import MeanSquaredError
 from modelo import construir_modelo, clip_parametros
 from utils import cargar_imagen
+
 
 class FotoAMIDI:
     def __init__(self, modelo_ruta='modelo_regresion_midi.h5', usar_clip=True, clip_model_name="ViT-B/32"):
@@ -35,6 +48,13 @@ class FotoAMIDI:
             imagen = imagen.resize(self.input_size)
             arr = np.array(imagen) / 255.0
             return np.expand_dims(arr, axis=0)
+
+    def load_modelo(self):
+        self.modelo = keras.models.load_model(
+            self.modelo_ruta,
+            custom_objects={'mse': MeanSquaredError()}
+        )
+
 
     def predict(self, imagen):
         if self.modelo is None:
